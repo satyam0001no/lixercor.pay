@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lixercor - UTR Payment Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+      text-align: center;
+    }
+    .btn {
+      padding: 12px 24px;
+      background: #111;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    #download-section {
+      margin-top: 25px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lixercor Payment Verification</h1>
+  <p>Enter your UTR/Txn ID to verify your payment:</p>
+  
+  <input type="text" id="utr" placeholder="Enter UTR / Txn ID" />
+  <br><br>
+  <button class="btn" onclick="verifyUTR()">Verify Payment</button>
+
+  <p id="status"></p>
+
+  <div id="download-section">
+    <a href="MILLIONAIRE METHOD E-BOOK.pdf" download class="btn">📘 Download Now</a>
+  </div>
+
+  <script>
+    async function verifyUTR() {
+      const utr = document.getElementById('utr').value.trim();
+      const status = document.getElementById('status');
+      const downloadSection = document.getElementById('download-section');
+
+      if (!utr || utr.length < 6) {
+        status.innerText = "⚠️ Please enter a valid UTR number.";
+        downloadSection.style.display = "none";
+        return;
+      }
+
+      status.innerText = "🔄 Verifying, please wait...";
+
+      try {
+        const res = await fetch("/verify-utr", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ utr })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          status.innerText = "✅ Payment verified!";
+          downloadSection.style.display = "block";
+        } else {
+          status.innerText = "❌ UTR not found or invalid.";
+          downloadSection.style.display = "none";
+        }
+      } catch (error) {
+        status.innerText = "⚠️ Server error. Please try again later.";
+        downloadSection.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>
